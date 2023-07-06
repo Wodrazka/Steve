@@ -5,7 +5,5 @@
 
         ILog Log(string name);
 
-        ILog TimeLog(string name);
-
     }
 }

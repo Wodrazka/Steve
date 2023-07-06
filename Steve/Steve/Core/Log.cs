@@ -1,10 +1,13 @@
-﻿using System.Runtime.CompilerServices;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Steve.Core
 {
+
     public class Log : ILog
     {
         private readonly Action<LogMessage> _submit;
+        private Stopwatch _stopwatch;
         internal LogMessage _message;
         internal Log(string name, Action<LogMessage> submit)
         {
@@ -15,8 +18,14 @@ namespace Steve.Core
             _submit = submit;
         }
 
-        public virtual void Submit()
+        public void Submit()
         {
+            if (_stopwatch != null)
+            {
+                _stopwatch.Stop();
+                _message.Duration = _stopwatch.Elapsed.TotalSeconds;
+            }
+
             _submit(_message);
         }
 
@@ -54,6 +63,12 @@ namespace Steve.Core
         public ILog WithParameters(params (string, object)[] parameters)
         {
             _message.Parameters = parameters.ToDictionary(e => e.Item1, e => e.Item2);
+            return this;
+        }
+
+        public ILog StartTimer()
+        {
+            _stopwatch = Stopwatch.StartNew();
             return this;
         }
     }

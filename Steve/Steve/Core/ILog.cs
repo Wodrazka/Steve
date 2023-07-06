@@ -14,6 +14,8 @@ namespace Steve.Core
 
         ILog WithCallerInfo([CallerMemberName] string methodName = "", [CallerFilePath] string filepath = "", [CallerLineNumber] int lineNumber = 0);
 
+        ILog StartTimer();
+
         void Submit();
     }
 }

@@ -9,10 +9,11 @@ ILogging<Program> logger = new Logging<Program>(LoggingLevel.Debug, new List<ILo
     new FileLogger(fileTimeSpan: FileTimeSpan.MONTH)
 });
 
-var timelog = logger.TimeLog("First timelog")
+var timelog = logger.Log("First timelog")
     .WithLogLevel(LogLevel.Debug)
     .WithMessage("the Sandbox")
-    .WithCallerInfo();
+    .WithCallerInfo()
+    .StartTimer();
 
 logger.Log("First log")
     .WithMessage("First message")

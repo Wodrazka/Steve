@@ -31,11 +31,5 @@ namespace Steve.Core
             var log = new Log(name, Submit);
             return log;
         }
-
-        public ILog TimeLog(string name)
-        {
-            var log = new TimeLog(name, Submit);
-            return log;
-        }
     }
 }
