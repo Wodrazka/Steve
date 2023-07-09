@@ -26,11 +26,16 @@ namespace Steve.Core
 
         public double? Duration { get; set; }
 
+        
+        public object? Object { get; set; }
+
         [JsonIgnore]
         public static JsonSerializerSettings SerializerSettings => new JsonSerializerSettings()
         {
             NullValueHandling = NullValueHandling.Ignore,
             Formatting = Formatting.Indented,
+            TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
+            TypeNameHandling = TypeNameHandling.Auto
         };
 
     }

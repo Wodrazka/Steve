@@ -66,6 +66,12 @@ namespace Steve.Core
             return this;
         }
 
+        public ILog WithObject(object obj)
+        {
+            _message.Object = obj;
+            return this;
+        }
+
         public ILog StartTimer()
         {
             _stopwatch = Stopwatch.StartNew();

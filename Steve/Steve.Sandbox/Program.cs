@@ -24,6 +24,19 @@ logger.Log("First error log")
     .WithException(new Exception("Update failed"))
     .Submit();
 
+APIResponse response = new()
+{
+    Status = 200,
+    Message = "Mock message",
+    ErrorCode = -1
+};
+
+logger.Log("API")
+    .WithMessage("API Response")
+    .WithCallerInfo()
+    .WithObject(response)
+    .Submit();
+
 logger.Log("log")
     .WithMessage("Update {newVersion} succesfull")
     .WithParameters(("newVersion", "1.0.0"))
@@ -33,3 +46,12 @@ logger.Log("log")
 
 timelog.Submit();
 
+class APIResponse
+{
+    public int Status { get; set; }
+
+    public string? Message { get; set; }
+
+    public int ErrorCode { get; set; }
+
+}
