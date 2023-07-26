@@ -3,7 +3,7 @@ using Steve.Core.Converter;
 
 namespace Steve.Core
 {
-    internal class LogMessage
+    public class LogMessage
     {
         public string? Name { get; set; }
 
@@ -25,8 +25,7 @@ namespace Steve.Core
         public CallerInfo? CallerInfo { get; set; }
 
         public double? Duration { get; set; }
-
-        
+  
         public object? Object { get; set; }
 
         [JsonIgnore]

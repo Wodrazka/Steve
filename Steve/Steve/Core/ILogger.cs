@@ -2,8 +2,8 @@
 {
     public interface ILogger
     {
-        internal void Submit(LogMessage logMessage);
-        internal void Flush();
+        public void Submit(LogMessage logMessage);
+        public void Flush();
 
     }
 }
