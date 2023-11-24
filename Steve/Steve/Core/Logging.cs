@@ -5,11 +5,11 @@ namespace Steve.Core
     public class Logging<T> : ILogging<T>
     {
         [JsonProperty]
-        private List<ILogger> _loggers;
+        private ILogger[] _loggers;
 
         private LoggingLevel _loggingLevel = LoggingLevel.Error;
 
-        public Logging(LoggingLevel loggingLevel, List<ILogger> loggers)
+        public Logging(LoggingLevel loggingLevel, ILogger[] loggers)
         {
             _loggingLevel = loggingLevel;
             _loggers = loggers;
