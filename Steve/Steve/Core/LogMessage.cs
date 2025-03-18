@@ -25,7 +25,7 @@ namespace Steve.Core
         public CallerInfo? CallerInfo { get; set; }
 
         public double? Duration { get; set; }
-  
+
         public object? Object { get; set; }
 
         [JsonIgnore]

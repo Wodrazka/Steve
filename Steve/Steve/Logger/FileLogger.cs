@@ -1,11 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Steve.Core;
 using Steve.Logger.Misc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Steve.Logger
 {
