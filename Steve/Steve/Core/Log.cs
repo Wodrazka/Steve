@@ -1,81 +1,85 @@
+namespace Steve.Core;
+
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace Steve.Core
+public class Log : ILog
 {
+    private readonly Action<LogMessage> _submit;
+    private readonly LogMessage _message;
+    private Stopwatch _stopwatch;
 
-    public class Log : ILog
+    internal Log(string name, Action<LogMessage> submit)
     {
-        private readonly Action<LogMessage> _submit;
-        private Stopwatch _stopwatch;
-        internal LogMessage _message;
-        internal Log(string name, Action<LogMessage> submit)
+        _message = new()
         {
-            _message = new()
-            {
-                Name = name
-            };
-            _submit = submit;
+            Name = name
+        };
+        _submit = submit;
+        _stopwatch = new Stopwatch();
+    }
+
+    public void Submit()
+    {
+        if (_stopwatch.IsRunning)
+        {
+            _stopwatch.Stop();
         }
 
-        public void Submit()
+        if (_stopwatch.ElapsedMilliseconds > 0)
         {
-            if (_stopwatch != null)
-            {
-                _stopwatch.Stop();
-                _message.Duration = _stopwatch.Elapsed.TotalSeconds;
-            }
-
-            _submit(_message);
+            _message.Duration = _stopwatch.Elapsed.TotalSeconds;
         }
 
-        public ILog WithCallerInfo([CallerMemberName] string methodName = "", [CallerFilePath] string filepath = "", [CallerLineNumber] int lineNumber = 0)
-        {
-            var callerInfo = new CallerInfo()
-            {
-                FilePath = filepath,
-                LineNumber = lineNumber,
-                Origin = methodName
-            };
-            _message.CallerInfo = callerInfo;
-            return this;
-        }
+        _submit(_message);
+    }
 
-        public ILog WithException(Exception exception, bool withInnerException = false)
+    public ILog WithCallerInfo([CallerMemberName] string methodName = "", [CallerFilePath] string filepath = "", [CallerLineNumber] int lineNumber = 0)
+    {
+        var callerInfo = new CallerInfo()
         {
-            _message.Exception = exception;
-            _message.WithInnerException = withInnerException;
-            return this;
-        }
+            FilePath = filepath,
+            LineNumber = lineNumber,
+            Origin = methodName
+        };
+        _message.CallerInfo = callerInfo;
+        return this;
+    }
 
-        public ILog WithLogLevel(LogLevel level)
-        {
-            _message.Level = level;
-            return this;
-        }
+    public ILog WithException(Exception exception, bool withInnerException = false)
+    {
+        _message.Exception = exception;
+        _message.WithInnerException = withInnerException;
+        return this;
+    }
 
-        public ILog WithMessage(string message)
-        {
-            _message.Message = message;
-            return this;
-        }
+    public ILog WithLogLevel(LogLevel level)
+    {
+        _message.Level = level;
+        return this;
+    }
 
-        public ILog WithParameters(params (string, object)[] parameters)
-        {
-            _message.Parameters = parameters.ToDictionary(e => e.Item1, e => e.Item2);
-            return this;
-        }
+    public ILog WithMessage(string message)
+    {
+        _message.Message = message;
+        return this;
+    }
 
-        public ILog WithObject(object obj)
-        {
-            _message.Object = obj;
-            return this;
-        }
+    public ILog WithParameters(params (string, object)[] parameters)
+    {
+        _message.Parameters = parameters.ToDictionary(e => e.Item1, e => e.Item2);
+        return this;
+    }
 
-        public ILog StartTimer()
-        {
-            _stopwatch = Stopwatch.StartNew();
-            return this;
-        }
+    public ILog WithObject(object obj)
+    {
+        _message.AdditionalObject = obj;
+        return this;
+    }
+
+    public ILog StartTimer()
+    {
+        _stopwatch = Stopwatch.StartNew();
+        return this;
     }
 }
