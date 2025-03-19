@@ -1,17 +1,16 @@
-﻿namespace Steve.Logger.Misc
+namespace Steve.Logger.Misc;
+
+public enum FileTimeSpan
 {
-    public enum FileTimeSpan
-    {
 
-        DAY,
+    DAY,
 
-        WEEK,
+    WEEK,
 
-        MONTH,
+    MONTH,
 
-        YEAR,
+    YEAR,
 
-        INFINITY
+    INFINITY
 
-    }
 }

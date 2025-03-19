@@ -1,75 +1,71 @@
-﻿using Newtonsoft.Json;
+namespace Steve.Logger;
+
+using Newtonsoft.Json;
 using Steve.Core;
 using Steve.Logger.Misc;
 
-namespace Steve.Logger
+public class FileLogger : ILogger
 {
-    public class FileLogger : ILogger
+    [JsonProperty]
+    public string Basepath { get; set; } = "";
+
+    [JsonProperty]
+    [JsonConverter(typeof(FileTimeSpanConverter))]
+    public FileTimeSpan FileTimeSpan { get; set; } = FileTimeSpan.INFINITY;
+
+    [JsonProperty]
+    public int LogThreshold { get; set; } = 1;
+
+    private readonly List<LogMessage> _messages;
+
+    private readonly object _messagesLock;
+
+    public FileLogger(string basepath = "", int logThreshold = 1, FileTimeSpan fileTimeSpan = FileTimeSpan.INFINITY)
     {
-        [JsonProperty]
-        public string Basepath { get; set; } = "";
+        Basepath = basepath;
+        LogThreshold = logThreshold;
+        FileTimeSpan = fileTimeSpan;
 
-        [JsonProperty]
-        [JsonConverter(typeof(FileTimeSpanConverter))]
-        public FileTimeSpan FileTimeSpan { get; set; } = FileTimeSpan.INFINITY;
+        _messagesLock = new object();
 
-        [JsonProperty]
-        public int LogThreshold { get; set; } = 1;
+        var filepath = Path.Combine(Basepath ?? Environment.CurrentDirectory, $"log_{FileTimeSpan.GetDateTimeString()}.json");
 
-        private readonly List<LogMessage> _messages;
-
-        private object _messagesLock;
-
-        public FileLogger(string basepath = "", int logThreshold = 1, FileTimeSpan fileTimeSpan = FileTimeSpan.INFINITY)
+        if (File.Exists(filepath))
         {
-            Basepath = basepath;
-            LogThreshold = logThreshold;
-            FileTimeSpan = fileTimeSpan;
+            _messages = JsonConvert.DeserializeObject<List<LogMessage>>(File.ReadAllText(filepath), LogMessage.SerializerSettings) ?? [];
+        }
+        else
+        {
+            _messages = [];
+        }
+    }
 
-            _messagesLock = new object();
+    void ILogger.Flush() => InternalFlush();
 
-            string filepath = Path.Combine(Basepath ?? Environment.CurrentDirectory, $"log_{FileTimeSpan.GetDateTimeString()}.json");
-
-            if (File.Exists(filepath))
-            {
-                _messages = JsonConvert.DeserializeObject<List<LogMessage>>(File.ReadAllText(filepath), LogMessage.SerializerSettings) ?? new List<LogMessage>();
-            }
-            else
-            {
-                _messages = new List<LogMessage>();
-            }
+    void ILogger.Submit(LogMessage logMessage)
+    {
+        lock (_messagesLock)
+        {
+            _messages.Add(logMessage);
         }
 
-        void ILogger.Flush()
+        lock (_messagesLock)
         {
-            InternalFlush();
-        }
-
-        void ILogger.Submit(LogMessage logMessage)
-        {
-            lock (_messagesLock)
+            if (_messages.Count >= LogThreshold)
             {
-                _messages.Add(logMessage);
-            }
-
-            lock (_messagesLock)
-            {
-                if (_messages.Count >= LogThreshold)
-                {
-                    InternalFlush();
-                }
+                InternalFlush();
             }
         }
+    }
 
-        private void InternalFlush()
+    private void InternalFlush()
+    {
+        lock (_messagesLock)
         {
-            lock (_messagesLock)
-            {
-                string filepath = Path.Combine(Basepath ?? Environment.CurrentDirectory, $"log_{FileTimeSpan.GetDateTimeString()}.json");
+            var filepath = Path.Combine(Basepath ?? Environment.CurrentDirectory, $"log_{FileTimeSpan.GetDateTimeString()}.json");
 
-                //TODO: logging without load and save all log messages
-                File.WriteAllText(filepath, JsonConvert.SerializeObject(_messages, LogMessage.SerializerSettings));
-            }
+            //TODO: logging without load and save all log messages
+            File.WriteAllText(filepath, JsonConvert.SerializeObject(_messages, LogMessage.SerializerSettings));
         }
     }
 }

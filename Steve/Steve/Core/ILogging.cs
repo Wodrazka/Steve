@@ -1,9 +1,8 @@
-﻿namespace Steve.Core
+namespace Steve.Core;
+
+public interface ILogging<T>
 {
-    public interface ILogging<T>
-    {
 
-        ILog Log(string name);
+    ILog Log(string name);
 
-    }
 }
