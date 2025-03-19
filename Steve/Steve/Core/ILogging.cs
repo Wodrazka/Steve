@@ -3,6 +3,6 @@ namespace Steve.Core;
 public interface ILogging<T>
 {
 
-    ILog Log(string name);
+    public ILog Log(string name);
 
 }

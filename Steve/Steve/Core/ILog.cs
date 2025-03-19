@@ -4,19 +4,19 @@ using System.Runtime.CompilerServices;
 
 public interface ILog
 {
-    ILog WithMessage(string message);
+    public ILog WithMessage(string message);
 
-    ILog WithParameters(params (string, object)[] parameters);
+    public ILog WithParameters(params (string, object)[] parameters);
 
-    ILog WithLogLevel(LogLevel level);
+    public ILog WithLogLevel(LogLevel level);
 
-    ILog WithException(Exception exception, bool withInnerException = false);
+    public ILog WithException(Exception exception, bool withInnerException = false);
 
-    ILog WithCallerInfo([CallerMemberName] string methodName = "", [CallerFilePath] string filepath = "", [CallerLineNumber] int lineNumber = 0);
+    public ILog WithCallerInfo([CallerMemberName] string methodName = "", [CallerFilePath] string filepath = "", [CallerLineNumber] int lineNumber = 0);
 
-    ILog WithObject(object obj);
+    public ILog WithObject(object obj);
 
-    ILog StartTimer();
+    public ILog StartTimer();
 
-    void Submit();
+    public void Submit();
 }
